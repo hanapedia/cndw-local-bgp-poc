@@ -12,7 +12,7 @@ endif
 APP_NAME := go-http-echo
 IMAGE := $(APP_NAME):latest
 KIND_CLUSTER := kind0
-DEPLOYMENT_FILE := deployment.yaml
+DEPLOYMENT_FILES := k8s
 TEST_LB_NAME := default-lb
 TEST_LB_IP := 10.0.10.0
 ROUTER_CONTAINER_NAME := clab-bgp-on-kind-router0
@@ -30,11 +30,11 @@ load:
 
 ## Apply Kubernetes manifests
 deploy: build load
-	kubectl apply -f $(DEPLOYMENT_FILE)
+	kubectl apply -f $(DEPLOYMENT_FILES)
 
 ## Remove deployment
 clean:
-	kubectl delete -f $(DEPLOYMENT_FILE) || true
+	kubectl delete -f $(DEPLOYMENT_FILES) || true
 
 test: 
 	kubectl exec $(CURL_POD) -- curl -s $(TEST_LB_NAME)

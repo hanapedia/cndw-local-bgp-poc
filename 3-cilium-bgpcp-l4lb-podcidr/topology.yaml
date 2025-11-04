@@ -1,0 +1,42 @@
+name: bgp-on-kind
+
+topology:
+  nodes:
+    # A simple BGP router that peers with Cilium with eBGP.
+    router0:
+      kind: linux
+      image: bird:latest
+      binds:
+        - bird/router0_bird.conf:/etc/bird.conf
+      exec:
+      - ip addr add 10.0.0.1/32 dev lo
+      - ip addr add 10.0.1.1/24 dev net1
+      - ip addr add 10.0.2.1/24 dev net2
+      - sysctl -w net.ipv4.ip_forward=1
+      - iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
+    kind0:
+      kind: k8s-kind
+      startup-config: kind/kind0-config.yaml
+      extras:
+        k8s_kind:
+          deploy:
+            wait: 0s # this is useful when default kind cni is disabled
+
+    # kind0 cluster contains 2 nodes: a control-plane and a worker
+    # the cluster config is defined in kind0-config.yaml
+    kind0-control-plane:
+      kind: ext-container
+      exec:
+      - ip addr add 10.0.1.2/24 dev net0
+      - ip route replace default via 10.0.1.1 dev net0
+      - ip route add 10.1.0.0/16 via 10.0.1.1 dev net0 # hardcode podcidr fallback route for native routing
+    kind0-worker:
+      kind: ext-container
+      exec:
+      - ip addr add 10.0.2.2/24 dev net0
+      - ip route replace default via 10.0.2.1 dev net0
+      - ip route add 10.1.0.0/16 via 10.0.2.1 dev net0 # hardcode podcidr fallback route for native routing
+
+  links:
+  - endpoints: ["router0:net1", "kind0-control-plane:net0"]
+  - endpoints: ["router0:net2", "kind0-worker:net0"]

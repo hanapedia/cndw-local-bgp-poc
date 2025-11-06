@@ -3,7 +3,6 @@ debug:
 
 routingMode: native
 ipv4NativeRoutingCIDR: 10.1.0.0/16 # pod cidr defined in kind config
-tunnelProtocol: geneve
 
 bgpControlPlane:
   enabled: true
@@ -32,6 +31,7 @@ loadBalancer:
   algorithm: maglev
   dsrDispatch: geneve
   mode: dsr
+tunnelProtocol: geneve
 k8sServiceHost: kind0-control-plane
 k8sServicePort: 6443
 nodePort:
@@ -39,6 +39,4 @@ nodePort:
   enabled: true
 envoy:
   enabled: false
-bpf:
-  hostLegacyRouting: true
 enableIPv4Masquerade: false

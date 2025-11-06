@@ -1,0 +1,44 @@
+debug:
+  enabled: true
+
+routingMode: native
+ipv4NativeRoutingCIDR: 10.1.0.0/16 # pod cidr defined in kind config
+tunnelProtocol: geneve
+
+bgpControlPlane:
+  enabled: true
+  v2Enabled: true
+# bgp:
+#   announce:
+#     loadbalancerIP: true
+#   enabled: true
+
+ipam:
+  mode: kubernetes
+
+k8s:
+  requireIPv4PodCIDR: true
+
+operator:
+  enabled: true
+  replicas: 1
+
+devices: net0
+
+# maglev & DSR
+kubeProxyReplacement: true
+loadBalancer:
+  acceleration: disabled
+  algorithm: maglev
+  dsrDispatch: geneve
+  mode: dsr
+k8sServiceHost: kind0-control-plane
+k8sServicePort: 6443
+nodePort:
+  directRoutingDevice: "net0"
+  enabled: true
+envoy:
+  enabled: false
+bpf:
+  hostLegacyRouting: true
+enableIPv4Masquerade: false

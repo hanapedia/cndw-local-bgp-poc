@@ -12,6 +12,8 @@ spec:
       labels:
         app: go-http-echo
     spec:
+      # nodeSelector:
+      #   kubernetes.io/hostname: kind0-worker
       containers:
         - name: go-http-echo
           image: go-http-echo:latest

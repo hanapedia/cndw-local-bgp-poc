@@ -18,7 +18,11 @@ func main() {
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		message := fmt.Sprintf("Hello from %s!\n", podName)
 		w.WriteHeader(http.StatusOK)
-		_, _ = w.Write([]byte(message))
+		_, err := w.Write([]byte(message))
+		if err != nil {
+			fmt.Println(err)
+		}
+		fmt.Println(message)
 	})
 
 	addr := ":8080"

@@ -1,0 +1,29 @@
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pwru-idle
+spec:
+  nodeSelector:
+    kubernetes.io/hostname: kind0-control-plane
+  hostNetwork: true
+  hostPID: true
+  containers:
+  - name: pwru
+    image: docker.io/cilium/pwru:v1.0.10
+    imagePullPolicy: IfNotPresent
+    securityContext:
+      privileged: true
+    volumeMounts:
+    - name: sys-kernel-debug
+      mountPath: /sys/kernel/debug
+      readOnly: true
+    command:
+    - sleep
+    args:
+    - infinity
+  volumes:
+  - name: sys-kernel-debug
+    hostPath:
+      path: /sys/kernel/debug
+      type: Directory

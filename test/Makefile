@@ -31,11 +31,13 @@ load:
 ## Apply Kubernetes manifests
 deploy: build load
 	kubectl apply -f $(DEPLOYMENT_FILES)
+	kubectl wait --for=condition=Ready -n default pod -l app=curl
+	kubectl wait --for=condition=Ready -n default pod -l app=go-http-echo
 
 ## Remove deployment
 clean:
 	kubectl delete -f $(DEPLOYMENT_FILES) || true
 
-test: 
+test: deploy
 	kubectl exec $(CURL_POD) -- curl -s $(TEST_LB_NAME)
 	docker exec $(ROUTER_CONTAINER_NAME) curl -s $(TEST_LB_IP)

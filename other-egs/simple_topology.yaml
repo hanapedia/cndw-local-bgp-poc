@@ -1,0 +1,17 @@
+name: simple
+
+topology:
+  nodes:
+    router0:
+      kind: linux
+      image: ubuntu:24.04
+      exec:
+      - ip addr add 10.0.1.1/24 dev net0
+    node0:
+      kind: linux
+      image: ubuntu:24.04
+      exec:
+      - ip addr add 10.0.1.2/24 dev net0
+  links:
+  - endpoints: ["router0:net0", "node0:net0"]
+

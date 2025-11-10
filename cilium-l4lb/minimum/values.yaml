@@ -1,0 +1,16 @@
+routingMode: tunnel
+tunnelProtocol: geneve
+
+bgpControlPlane:
+  enabled: true
+  v2Enabled: true
+
+ipam:
+  mode: kubernetes
+
+k8s:
+  requireIPv4PodCIDR: true
+
+operator:
+  enabled: true
+  replicas: 1

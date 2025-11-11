@@ -1,3 +1,4 @@
+MAKEFLAGS += --no-print-directory
 ARCH := $(shell uname -m)
 ifeq ($(ARCH),x86_64)
     PLATFORM := linux/amd64
@@ -18,7 +19,7 @@ TEST_LB_IP := 10.0.10.0
 ROUTER_CONTAINER_NAME := clab-bgp-on-kind-router0
 CURL_POD := $(shell yq '.metadata.name' k8s/curl.yaml)
 
-.PHONY: build load deploy clean
+.PHONY: build load deploy clean test test-pod2pod test-l4lb
 
 ## Build the container image
 build:
@@ -39,5 +40,11 @@ clean:
 	kubectl delete -f $(DEPLOYMENT_FILES) || true
 
 test: deploy
+	$(MAKE) test-pod2pod
+	$(MAKE) test-l4lb
+
+test-pod2pod:
 	kubectl exec $(CURL_POD) -- curl -s $(TEST_LB_NAME)
+
+test-l4lb:
 	docker exec $(ROUTER_CONTAINER_NAME) curl -s $(TEST_LB_IP)

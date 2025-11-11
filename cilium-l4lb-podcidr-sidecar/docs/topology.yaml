@@ -1,0 +1,28 @@
+name: bgp-on-kind
+
+topology:
+  nodes:
+    router0:
+      # no changes
+    kind0:
+      # no changes
+    kind0-control-plane:
+      # no changes
+    kind0-worker:
+      # no changes
+    
+    kind0-control-plane-bird:
+      kind: linux
+      image: bird:latest
+      binds:
+        - bird/control-plane_bird.conf:/etc/bird.conf
+      network-mode: container:kind0-control-plane
+    kind0-worker-bird:
+      kind: linux
+      image: bird:latest
+      binds:
+        - bird/control-plane_bird.conf:/etc/bird.conf
+      network-mode: container:kind0-worker
+
+  links:
+      # no changes

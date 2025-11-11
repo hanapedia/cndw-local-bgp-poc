@@ -14,9 +14,15 @@ func main() {
 		podName = "unknown"
 	}
 
+	// Read NODE_NAME from environment (default to "unknown" if not set)
+	nodeName := os.Getenv("NODE_NAME")
+	if nodeName == "" {
+		nodeName = "unknown"
+	}
+
 	// Define handler
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		message := fmt.Sprintf("Hello from %s!\n", podName)
+		message := fmt.Sprintf("Hello from %s on %s!\n", podName, nodeName)
 		w.WriteHeader(http.StatusOK)
 		_, err := w.Write([]byte(message))
 		if err != nil {
@@ -26,7 +32,7 @@ func main() {
 	})
 
 	addr := ":8080"
-	log.Printf("Starting server on %s (pod: %s)\n", addr, podName)
+	log.Printf("Starting server on %s (pod: %s, node: %s)\n", addr, podName, nodeName)
 
 	// Start HTTP server
 	if err := http.ListenAndServe(addr, nil); err != nil {

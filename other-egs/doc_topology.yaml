@@ -1,0 +1,28 @@
+name: <name for the lab>
+topology:
+  nodes:
+    router0:
+      kind: nokia_srlinux
+    node0:
+      kind: linux
+      image: <any container image>
+      binds:
+        - <local path>:<container path>
+      exec:
+      - <any command>
+    kind0:
+      kind: k8s-kind
+      startup-config: <local kind config path>
+    kind0-control-plane:
+      kind: ext-container # attaches to container created by kind
+      exec:
+      - <some command to run in existing container>
+    kind0-worker-attach:
+      kind: linux
+      image: <any container image>
+      # creates new container that shares 
+      # netns with existing container
+      network-mode: container:kind0-worker
+
+  links:
+  - endpoints: ["<node name>:<iface name>", "<node name>:<iface name>"]

@@ -8,11 +8,11 @@ spec:
     matchLabels:
       bgp: "65001"
   bgpInstances:
-  - name: "65002"
-    localASN: 65002
+  - name: "64999"
+    localASN: 64999
     peers:
-    - name: "65001"
-      peerASN: 65001
+    - name: "64998"
+      peerASN: 64998
       peerAddress: 127.0.0.1 # peer with bgp daemon on the node via localhost
       peerConfigRef:
         name: "cilium-peer" # CiliumBGPPeerConfig
@@ -29,6 +29,7 @@ spec:
       matchLabels:
         advertise: lbip-podcidr
 ---
+# LoadBalancerIP & PodCIDR advertisements
 apiVersion: cilium.io/v2alpha1
 kind: CiliumBGPAdvertisement
 metadata:
@@ -37,6 +38,16 @@ metadata:
     advertise: lbip-podcidr
 spec:
   advertisements:
+    - advertisementType: "Service"
+      service:
+        addresses:
+          - LoadBalancerIP
+      selector:
+        matchExpressions:
+         - {key: somekey, operator: NotIn, values: ['never-used-value']} # all LoadBalancerIPs
+      attributes:
+        communities:
+          standard: [ "65001:65002" ]
     - advertisementType: "PodCIDR"
 ---
 apiVersion: "cilium.io/v2alpha1"

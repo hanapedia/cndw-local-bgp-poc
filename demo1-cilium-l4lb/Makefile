@@ -26,6 +26,8 @@ deploy: build-bird cilium-manifests
 	cilium status --wait --namespace kube-system
 	# install bgpcp
 	kubectl apply -f cilium/bgpcp.yaml
+	# deploy test setup
+	$(MAKE) -C ../test/ deploy
 
 .PHONY: destroy
 destroy:
@@ -47,3 +49,7 @@ cilium/upstream.yaml: cilium/values.yaml
 reload:
 	$(MAKE) destroy
 	$(MAKE) deploy
+
+.PHONY: test
+test:
+	$(MAKE) -C ../test/ test-l4lb

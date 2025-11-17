@@ -46,6 +46,9 @@ spec:
           - key: somekey
             operator: NotIn 
             values: ['never-used-value']
+      attributes:
+        communities:
+          standard: [ "65001:65002" ]
 ---
 apiVersion: "cilium.io/v2alpha1"
 kind: CiliumLoadBalancerIPPool

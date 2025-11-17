@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: go-http-echo
 spec:
-  replicas: 3
+  replicas: 2
   selector:
     matchLabels:
       app: go-http-echo
@@ -12,8 +12,13 @@ spec:
       labels:
         app: go-http-echo
     spec:
-      # nodeSelector:
-      #   kubernetes.io/hostname: kind0-worker
+      topologySpreadConstraints:
+        - maxSkew: 1
+          topologyKey: kubernetes.io/hostname
+          whenUnsatisfiable: DoNotSchedule
+          labelSelector:
+            matchLabels:
+              app: go-http-echo
       containers:
         - name: go-http-echo
           image: go-http-echo:latest
@@ -36,6 +41,7 @@ metadata:
   name: default-lb
 spec:
   type: LoadBalancer
+  externalTrafficPolicy: Local # to easily show that ECMP is working
   selector:
     app: go-http-echo
   ports:

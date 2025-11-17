@@ -19,7 +19,7 @@ TEST_LB_IP := 10.0.10.0
 ROUTER_CONTAINER_NAME := clab-bgp-on-kind-router0
 CURL_POD := $(shell yq '.metadata.name' k8s/curl.yaml)
 
-.PHONY: build load deploy clean test test-pod2pod test-l4lb
+.PHONY: build load deploy clean test test-pod2pod test-l4lb show-table
 
 ## Build the container image
 build:
@@ -48,3 +48,7 @@ test-pod2pod:
 
 test-l4lb:
 	docker exec $(ROUTER_CONTAINER_NAME) curl -s $(TEST_LB_IP)
+
+show-table:
+	docker exec $(ROUTER_CONTAINER_NAME) ip r show to $(TEST_LB_IP)
+	docker exec $(ROUTER_CONTAINER_NAME) birdc show route for $(TEST_LB_IP)

@@ -22,8 +22,12 @@ deploy: build-bird cilium-manifests
 	kind export kubeconfig --name kind0
 	kubectl taint nodes kind0-control-plane node-role.kubernetes.io/control-plane:NoSchedule-
 	# install cilium
-	kubectl apply -f cilium/bpg-config.yaml -f cilium/upstream.yaml
-	cilium status --wait --namespace kube-system
+	kubectl apply -f cilium/upstream.yaml
+	kubectl wait --for=condition=Ready -n kube-system pod -l app.kubernetes.io/part-of=cilium --timeout=300s
+	# install bgpcp
+	kubectl apply -f cilium/bgpcp.yaml
+	# deploy test setup
+	$(MAKE) -C ../test/ deploy
 
 .PHONY: destroy
 destroy:
@@ -45,3 +49,11 @@ cilium/upstream.yaml: cilium/values.yaml
 reload:
 	$(MAKE) destroy
 	$(MAKE) deploy
+
+.PHONY: test
+test:
+	$(MAKE) -C ../test/ test-pod2pod
+
+.PHONY: test-l4lb
+test-l4lb:
+	$(MAKE) -C ../test/ test-l4lb

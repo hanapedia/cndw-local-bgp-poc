@@ -8,11 +8,11 @@ spec:
     matchLabels:
       bgp: "65001"
   bgpInstances:
-  - name: "65002"
-    localASN: 65002
+  - name: "64999"
+    localASN: 64999
     peers:
-    - name: "65001"
-      peerASN: 65001
+    - name: "64998"
+      peerASN: 64998
       peerAddress: 127.0.0.1 # peer with bgp daemon on the node via localhost
       peerConfigRef:
         name: "cilium-peer" # CiliumBGPPeerConfig

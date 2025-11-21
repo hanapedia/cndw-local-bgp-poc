@@ -23,7 +23,7 @@ deploy: build-bird cilium-manifests
 	kubectl taint nodes kind0-control-plane node-role.kubernetes.io/control-plane:NoSchedule-
 	# install cilium
 	kubectl apply -f cilium/upstream.yaml
-	cilium status --wait --namespace kube-system
+	kubectl wait --for=condition=Ready -n kube-system pod -l app.kubernetes.io/part-of=cilium --timeout=300s
 	# install bgpcp
 	kubectl apply -f cilium/bgpcp.yaml
 	# deploy test setup
